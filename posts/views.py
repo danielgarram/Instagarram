@@ -1,4 +1,5 @@
 # Django
+from django.db.models.aggregates import Count
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, DetailView, ListView
@@ -14,7 +15,7 @@ class PostsFeedView(LoginRequiredMixin, ListView):
     """Return all published posts."""
 
     template_name = 'posts/feed.html'
-    model = Post
+    queryset = Post.objects.all().annotate(number_of_likes=Count('like'))
     ordering = ('-created',)
     paginate_by = 30
     context_object_name = 'posts'
@@ -24,7 +25,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
     """Return post detail."""
 
     template_name = 'posts/detail.html'
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().annotate(number_of_likes=Count('like'))
     context_object_name = 'post'
 
 
